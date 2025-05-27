@@ -17,6 +17,7 @@ class PomodoroTimer {
         this.interval = null;
         this.isTimerVisible = false;
         this.sessionStartTime = null;
+        this.isDraggable = true;
         
         this.init();
         this.setupDraggableTimer();
@@ -58,6 +59,18 @@ class PomodoroTimer {
         this.updateDisplay();
         this.updateToggleButton();
         
+        // Show timer by default
+        this.isTimerVisible = true;
+        this.floatingTimer.classList.remove('hidden');
+        
+        // Listen for focus mode changes
+        document.body.addEventListener('focusModeChange', (e) => {
+            this.isDraggable = !e.detail.isActive;
+            if (e.detail.isActive) {
+                this.floatingTimer.style.transform = 'translate(-50%, -50%)';
+            }
+        });
+        
         console.log('PomodoroTimer initialization complete');
     }
 
@@ -72,32 +85,38 @@ class PomodoroTimer {
         let xOffset = 0;
         let yOffset = 0;
 
-        this.floatingTimer.addEventListener('mousedown', (e) => {
+        const handleMouseDown = (e) => {
+            if (!this.isDraggable) return;
+            
             initialX = e.clientX - xOffset;
             initialY = e.clientY - yOffset;
 
             if (e.target === this.floatingTimer) {
                 isDragging = true;
             }
-        });
+        };
 
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
+        const handleMouseMove = (e) => {
+            if (!isDragging || !this.isDraggable) return;
+            
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
 
-                xOffset = currentX;
-                yOffset = currentY;
+            xOffset = currentX;
+            yOffset = currentY;
 
-                this.floatingTimer.style.transform = 
-                    `translate(${currentX}px, ${currentY}px)`;
-            }
-        });
+            this.floatingTimer.style.transform = 
+                `translate(${currentX}px, ${currentY}px)`;
+        };
 
-        document.addEventListener('mouseup', () => {
+        const handleMouseUp = () => {
             isDragging = false;
-        });
+        };
+
+        this.floatingTimer.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
     }
 
     initializeEventListeners() {
@@ -226,10 +245,8 @@ class PomodoroTimer {
     }
 
     async playSound(soundName) {
-        if (!this.soundEnabled.checked) return;
-
-        const soundPath = path.join(__dirname, `../assets/sounds/${soundName}.mp3`);
         try {
+            const soundPath = path.join(__dirname, `../assets/sounds/${soundName}.mp3`);
             await sound.play(soundPath);
         } catch (error) {
             console.error('Error playing sound:', error);
@@ -340,13 +357,21 @@ class PomodoroTimer {
     }
 
     toggleTimer() {
-        this.isTimerVisible = !this.isTimerVisible;
-        this.floatingTimer.classList.toggle('hidden', !this.isTimerVisible);
-        this.updateToggleButton();
+        // Only toggle if not in focus mode
+        if (!document.body.classList.contains('focus-mode')) {
+            this.isTimerVisible = !this.isTimerVisible;
+            this.floatingTimer.classList.toggle('hidden', !this.isTimerVisible);
+            this.updateToggleButton();
+        }
     }
 
     updateToggleButton() {
         if (!this.toggleTimerButton) return;
+
+        // Don't update button text in focus mode
+        if (document.body.classList.contains('focus-mode')) {
+            return;
+        }
 
         if (this.isTimerVisible) {
             this.toggleTimerButton.textContent = 'Hide Timer';
@@ -358,6 +383,19 @@ class PomodoroTimer {
                 buttonText = `${stateText}: ${timeString}`;
             }
             this.toggleTimerButton.textContent = buttonText;
+        }
+    }
+
+    toggleFloatingTimer() {
+        const floatingTimer = document.getElementById('floating-timer');
+        const toggleButton = document.getElementById('toggle-timer');
+        
+        if (floatingTimer.classList.contains('hidden')) {
+            floatingTimer.classList.remove('hidden');
+            toggleButton.textContent = 'Hide Timer';
+        } else {
+            floatingTimer.classList.add('hidden');
+            toggleButton.textContent = 'Show Timer';
         }
     }
 }

@@ -53,17 +53,33 @@ function createWindow() {
 // Create focus mode window
 function createFocusModeWindow() {
   focusModeWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 800,
+    height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      enableRemoteModule: true
     },
     frame: false,
-    alwaysOnTop: true
+    transparent: true,
+    alwaysOnTop: true,
+    show: false
   });
 
-  focusModeWindow.loadFile(path.join(__dirname, '../renderer/focus.html'));
+  // Load the focus mode HTML file
+  const focusModePath = path.join(__dirname, '../renderer/focus.html');
+  console.log('Loading focus mode from:', focusModePath);
+  focusModeWindow.loadFile(focusModePath);
+
+  // Show window when ready
+  focusModeWindow.once('ready-to-show', () => {
+    focusModeWindow.show();
+  });
+
+  // Enable DevTools in development
+  if (process.env.NODE_ENV === 'development') {
+    focusModeWindow.webContents.openDevTools();
+  }
 
   focusModeWindow.on('closed', () => {
     focusModeWindow = null;
@@ -99,12 +115,27 @@ app.on('before-quit', () => {
   }
 });
 
-// IPC handlers
-ipcMain.on('toggle-focus-mode', (event, enabled) => {
-  if (enabled) {
-    createFocusModeWindow();
-  } else if (focusModeWindow) {
-    focusModeWindow.close();
+// Timer control handlers
+ipcMain.on('focus-timer-control', (event, action) => {
+  // Forward timer control actions to main window
+  if (mainWindow) {
+    mainWindow.webContents.send('focus-timer-control', action);
+  }
+});
+
+// Timer update handler
+ipcMain.on('timer-update', (event, data) => {
+  // Forward timer updates to focus mode window
+  if (focusModeWindow) {
+    focusModeWindow.webContents.send('timer-update', data);
+  }
+});
+
+// Theme update handler
+ipcMain.on('theme-update', (event, isDark) => {
+  // Forward theme updates to focus mode window
+  if (focusModeWindow) {
+    focusModeWindow.webContents.send('theme-update', isDark);
   }
 });
 

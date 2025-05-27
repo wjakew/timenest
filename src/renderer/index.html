@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div class="gradient-background"></div>
     <div class="top-section">
         <div class="titlebar">
             <div class="titlebar-title">TimeNest</div>
@@ -98,7 +99,8 @@
             console.log('Loading application...');
             
             try {
-                // Load the simplified scripts
+                // Load modules
+                console.log('Loading modules...');
                 const [tasks, timer, timerHistory, windowControls, timerChart] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
