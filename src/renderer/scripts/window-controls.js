@@ -1,5 +1,5 @@
 // Import the window control functions from the main process
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = window.require('electron');
 
 // Window control buttons
 const minimizeButton = document.getElementById('minimize-button');
@@ -17,4 +17,6 @@ maximizeButton.addEventListener('click', () => {
 
 closeButton.addEventListener('click', () => {
     ipcRenderer.send('window-close');
-}); 
+});
+
+export {}; // Add this to make it a module 

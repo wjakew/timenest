@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = window.require('electron');
 
 class TaskManager {
     constructor() {

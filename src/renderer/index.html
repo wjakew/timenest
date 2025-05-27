@@ -6,22 +6,43 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <div class="titlebar">
-        <div class="titlebar-title">TimeNest</div>
-        <div class="window-controls">
-            <button class="window-control-button minimize" id="minimize-button">─</button>
-            <button class="window-control-button maximize" id="maximize-button">□</button>
-            <button class="window-control-button close" id="close-button">×</button>
+    <div class="top-section">
+        <div class="titlebar">
+            <div class="titlebar-title">TimeNest</div>
+            <nav class="top-nav">
+                <div class="nav-menu">
+                    <button class="nav-btn active" data-view="tasks-view">Tasks</button>
+                    <button class="nav-btn" data-view="history-view">Timer History</button>
+                </div>
+            </nav>
+            <div class="window-controls">
+                <button class="window-control-button minimize" id="minimize-button">─</button>
+                <button class="window-control-button maximize" id="maximize-button">□</button>
+                <button class="window-control-button close" id="close-button">×</button>
+            </div>
         </div>
     </div>
+
     <div class="app-container">
         <!-- Tasks View -->
-        <div class="tasks-container">
-            <div class="tasks-header">
-                <h1>tasks</h1>
-                <button type="button" id="add-task" class="primary-button">+ New Task</button>
+        <div class="view" id="tasks-view">
+            <div class="tasks-container">
+                <div class="tasks-header">
+                    <h1>tasks</h1>
+                    <button type="button" id="add-task" class="primary-button">+ New Task</button>
+                </div>
+                <div class="task-list" id="task-list"></div>
             </div>
-            <div class="task-list" id="task-list"></div>
+        </div>
+
+        <!-- History View -->
+        <div class="view hidden" id="history-view">
+            <div class="history-container">
+                <div class="history-header">
+                    <h2>Timer History</h2>
+                </div>
+                <div class="timer-history" id="timer-history"></div>
+            </div>
         </div>
 
         <!-- Toggle Timer Button -->
@@ -67,16 +88,37 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         // Wait for DOM content to be loaded
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('Loading application...');
             
             try {
                 // Load the simplified scripts
-                await import('./scripts/tasks.js');
-                await import('./scripts/timer.js');
-                await import('./scripts/window-controls.js');
+                const [tasks, timer, timerHistory, windowControls] = await Promise.all([
+                    import('./scripts/tasks.js'),
+                    import('./scripts/timer.js'),
+                    import('./scripts/timer-history.js'),
+                    import('./scripts/window-controls.js')
+                ]);
+
+                // Setup navigation
+                const navButtons = document.querySelectorAll('.nav-btn');
+                const views = document.querySelectorAll('.view');
+
+                navButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Update active button
+                        navButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        // Show corresponding view
+                        const targetView = button.dataset.view;
+                        views.forEach(view => {
+                            view.classList.toggle('hidden', view.id !== targetView);
+                        });
+                    });
+                });
                 
                 console.log('Application loaded successfully');
             } catch (error) {

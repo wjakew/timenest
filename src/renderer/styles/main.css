@@ -14,22 +14,28 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
-/* Window decoration styles */
-.titlebar {
-    height: 32px;
-    background: var(--surface-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    -webkit-app-region: drag;
-    user-select: none;
+/* Top section styles */
+.top-section {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 9999;
+    background: var(--surface-color);
     border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+/* Window decoration styles */
+.titlebar {
+    height: 48px;
+    background: var(--surface-color);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    -webkit-app-region: drag;
+    user-select: none;
+    gap: 16px;
 }
 
 .titlebar-title {
@@ -39,6 +45,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 100px;
 }
 
 .titlebar-title::before {
@@ -54,6 +61,8 @@
     display: flex;
     gap: 8px;
     -webkit-app-region: no-drag;
+    min-width: 100px;
+    justify-content: flex-end;
 }
 
 .window-control-button {
@@ -99,7 +108,7 @@
 
 body {
     margin: 0;
-    padding: 52px 20px 20px 20px;
+    padding: 68px 20px 20px 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -114,13 +123,10 @@ body {
 
 /* Top Navigation styles */
 .top-nav {
-    background-color: var(--nav-bg);
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--border-color);
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
+    justify-content: center;
+    -webkit-app-region: no-drag;
 }
 
 .logo {
@@ -131,29 +137,28 @@ body {
 
 .nav-menu {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .nav-btn {
-    padding: 0.5rem 1rem;
+    padding: 6px 16px;
     border: none;
     border-radius: 6px;
-    background: none;
-    color: var(--text-color);
+    background: transparent;
+    color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .nav-btn:hover {
-    background-color: rgba(74, 144, 226, 0.1);
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-btn.active {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: white;
 }
 
@@ -167,12 +172,23 @@ body {
 
 .view {
     display: block;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 24px 0;
+    animation: fadeIn 0.3s ease;
 }
 
 .view.hidden {
     display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Timeline styles */
@@ -212,6 +228,7 @@ body {
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border-color);
     backdrop-filter: blur(10px);
+    margin-top: 0;
 }
 
 .tasks-header {
@@ -593,12 +610,29 @@ body {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    body {
-        padding: 16px;
+    .titlebar {
+        height: 40px;
+        padding: 0 8px;
+        gap: 8px;
     }
 
-    .app-container {
-        padding: 16px;
+    .titlebar-title {
+        font-size: 13px;
+        min-width: 80px;
+    }
+
+    .nav-btn {
+        padding: 4px 12px;
+        font-size: 13px;
+    }
+
+    body {
+        padding: 60px 16px 16px 16px;
+    }
+
+    .window-controls {
+        min-width: 80px;
+        gap: 4px;
     }
 
     .floating-timer {
@@ -613,6 +647,23 @@ body {
     .task-meta {
         flex-direction: column;
         gap: 8px;
+    }
+
+    .top-nav {
+        padding: 8px 16px;
+    }
+
+    .nav-menu {
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .view {
+        padding: 16px 0;
     }
 }
 
@@ -646,4 +697,98 @@ body {
 .toggle-timer-button .timer-status {
     color: var(--primary-color);
     font-weight: 600;
+}
+
+/* History styles */
+.history-container {
+    background: var(--surface-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    margin-top: 0;
+}
+
+.history-header {
+    margin-bottom: 24px;
+}
+
+.history-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(120deg, var(--primary-color), var(--primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.timer-history {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.timer-history::-webkit-scrollbar {
+    width: 8px;
+}
+
+.timer-history::-webkit-scrollbar-track {
+    background: var(--bg-color);
+    border-radius: 4px;
+}
+
+.timer-history::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.timer-history::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.history-item {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.history-task {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.history-time {
+    font-size: 14px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.history-type {
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+    margin-top: 4px;
+}
+
+.history-type:not(:empty) {
+    background: var(--primary-color);
+    color: white;
+    opacity: 0.8;
 } 

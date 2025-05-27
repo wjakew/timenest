@@ -1,6 +1,7 @@
-const { ipcRenderer } = require('electron');
-const sound = require('sound-play');
-const path = require('path');
+const { ipcRenderer } = window.require('electron');
+const sound = window.require('sound-play');
+const path = window.require('path');
+import timerHistory from './timer-history.js';
 
 class PomodoroTimer {
     constructor() {
@@ -15,6 +16,7 @@ class PomodoroTimer {
         this.pomodoroCount = 0;
         this.interval = null;
         this.isTimerVisible = false;
+        this.sessionStartTime = null;
         
         this.init();
         this.setupDraggableTimer();
@@ -242,6 +244,16 @@ class PomodoroTimer {
         if (this.isRunning) return;
 
         this.isRunning = true;
+        this.sessionStartTime = Date.now();
+        
+        // Record start in history
+        const currentTask = document.getElementById('current-task')?.textContent || 'No task';
+        this.currentHistoryEntry = {
+            startTime: this.sessionStartTime,
+            taskName: currentTask,
+            type: this.isBreak ? 'Break' : 'Work'
+        };
+
         this.updateDisplay();
 
         this.interval = setInterval(() => {
@@ -258,14 +270,22 @@ class PomodoroTimer {
     pause() {
         if (!this.isRunning) return;
 
-        this.isRunning = false;
         clearInterval(this.interval);
+        this.isRunning = false;
         this.updateDisplay();
+
+        // Record pause in history
+        if (this.currentHistoryEntry && this.sessionStartTime) {
+            this.currentHistoryEntry.endTime = Date.now();
+            this.currentHistoryEntry.duration = Math.floor((this.currentHistoryEntry.endTime - this.currentHistoryEntry.startTime) / 1000);
+            timerHistory.addHistoryEntry(this.currentHistoryEntry);
+            this.currentHistoryEntry = null;
+            this.sessionStartTime = null;
+        }
     }
 
     reset() {
-        this.isRunning = false;
-        clearInterval(this.interval);
+        this.pause();
         this.timeRemaining = this.isBreak ? this.breakDuration : this.workDuration;
         this.updateDisplay();
     }
@@ -273,6 +293,15 @@ class PomodoroTimer {
     async completeSession() {
         clearInterval(this.interval);
         this.isRunning = false;
+
+        // Record completion in history
+        if (this.currentHistoryEntry && this.sessionStartTime) {
+            this.currentHistoryEntry.endTime = Date.now();
+            this.currentHistoryEntry.duration = Math.floor((this.currentHistoryEntry.endTime - this.currentHistoryEntry.startTime) / 1000);
+            timerHistory.addHistoryEntry(this.currentHistoryEntry);
+            this.currentHistoryEntry = null;
+            this.sessionStartTime = null;
+        }
 
         if (this.isBreak) {
             // Break completed
@@ -335,5 +364,6 @@ class PomodoroTimer {
 
 // Create the timer instance and attach it to window
 console.log('Creating global PomodoroTimer instance...');
-window.pomodoroTimer = new PomodoroTimer();
-export default window.pomodoroTimer; 
+const pomodoroTimer = new PomodoroTimer();
+window.pomodoroTimer = pomodoroTimer;
+export default pomodoroTimer; 
