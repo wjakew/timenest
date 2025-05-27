@@ -296,7 +296,14 @@ body {
 
 .task-actions {
     display: flex;
+    flex-direction: column;
     gap: 8px;
+}
+
+.task-actions button {
+    width: 100%;
+    min-width: 80px;
+    text-align: center;
 }
 
 .task-details {
@@ -327,6 +334,13 @@ body {
     cursor: move;
     border: 1px solid var(--border-color);
     backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.floating-timer.hidden {
+    transform: translateX(150%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .timer-display {
@@ -600,4 +614,36 @@ body {
         flex-direction: column;
         gap: 8px;
     }
+}
+
+/* Toggle Timer Button */
+.toggle-timer-button {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    padding: 12px 20px;
+    background: rgb(196, 130, 5);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.toggle-timer-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.toggle-timer-button .timer-status {
+    color: var(--primary-color);
+    font-weight: 600;
 } 

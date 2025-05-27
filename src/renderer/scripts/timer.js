@@ -14,6 +14,7 @@ class PomodoroTimer {
         this.isBreak = false;
         this.pomodoroCount = 0;
         this.interval = null;
+        this.isTimerVisible = false;
         
         this.init();
         this.setupDraggableTimer();
@@ -35,6 +36,7 @@ class PomodoroTimer {
         this.saveSettingsButton = document.getElementById('save-timer-settings');
         this.cancelSettingsButton = document.getElementById('cancel-timer-settings');
         this.floatingTimer = document.getElementById('floating-timer');
+        this.toggleTimerButton = document.getElementById('toggle-timer');
 
         // Log element findings
         console.log('Timer elements found:', {
@@ -45,12 +47,14 @@ class PomodoroTimer {
             resetButton: !!this.resetButton,
             settingsButton: !!this.settingsButton,
             settingsModal: !!this.settingsModal,
-            floatingTimer: !!this.floatingTimer
+            floatingTimer: !!this.floatingTimer,
+            toggleTimerButton: !!this.toggleTimerButton
         });
 
         this.initializeEventListeners();
         this.loadSettings();
         this.updateDisplay();
+        this.updateToggleButton();
         
         console.log('PomodoroTimer initialization complete');
     }
@@ -96,6 +100,12 @@ class PomodoroTimer {
 
     initializeEventListeners() {
         console.log('Setting up PomodoroTimer event listeners...');
+
+        if (this.toggleTimerButton) {
+            this.toggleTimerButton.addEventListener('click', () => {
+                this.toggleTimer();
+            });
+        }
 
         if (this.startButton) {
             this.startButton.addEventListener('click', () => {
@@ -210,6 +220,7 @@ class PomodoroTimer {
         this.timerDisplay.textContent = this.formatTime(this.timeRemaining);
         this.startButton.disabled = this.isRunning;
         this.pauseButton.disabled = !this.isRunning;
+        this.updateToggleButton();
     }
 
     async playSound(soundName) {
@@ -299,9 +310,26 @@ class PomodoroTimer {
         await ipcRenderer.invoke('save-data', { key: 'statistics', data: stats });
     }
 
-    toggleFocusMode() {
-        ipcRenderer.send('toggle-focus-mode', !this.focusModeButton.classList.contains('active'));
-        this.focusModeButton.classList.toggle('active');
+    toggleTimer() {
+        this.isTimerVisible = !this.isTimerVisible;
+        this.floatingTimer.classList.toggle('hidden', !this.isTimerVisible);
+        this.updateToggleButton();
+    }
+
+    updateToggleButton() {
+        if (!this.toggleTimerButton) return;
+
+        if (this.isTimerVisible) {
+            this.toggleTimerButton.textContent = 'Hide Timer';
+        } else {
+            let buttonText = 'Show Timer';
+            if (this.isRunning) {
+                const timeString = this.formatTime(this.timeRemaining);
+                const stateText = this.isBreak ? 'Break' : 'Work';
+                buttonText = `${stateText}: ${timeString}`;
+            }
+            this.toggleTimerButton.textContent = buttonText;
+        }
     }
 }
 

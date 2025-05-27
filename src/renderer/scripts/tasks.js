@@ -183,8 +183,8 @@ class TaskManager {
                     <input type="checkbox" class="task-complete" ${task.completed ? 'checked' : ''}>
                     <h3 class="task-title">${task.title}</h3>
                     <div class="task-actions">
-                        <button class="timer-button edit-task">✏️</button>
-                        <button class="timer-button delete-task">🗑️</button>
+                        <button class="timer-button edit-task">Edit</button>
+                        <button class="timer-button delete-task">Delete</button>
                     </div>
                 </div>
                 <div class="task-details">
