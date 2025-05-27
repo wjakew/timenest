@@ -4,6 +4,7 @@
     <title>TimeNest</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="top-section">
@@ -40,6 +41,9 @@
             <div class="history-container">
                 <div class="history-header">
                     <h2>Timer History</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="timeChart"></canvas>
                 </div>
                 <div class="timer-history" id="timer-history"></div>
             </div>
@@ -95,11 +99,12 @@
             
             try {
                 // Load the simplified scripts
-                const [tasks, timer, timerHistory, windowControls] = await Promise.all([
+                const [tasks, timer, timerHistory, windowControls, timerChart] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
                     import('./scripts/timer-history.js'),
-                    import('./scripts/window-controls.js')
+                    import('./scripts/window-controls.js'),
+                    import('./scripts/timer-chart.js')
                 ]);
 
                 // Setup navigation

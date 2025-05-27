@@ -1,4 +1,5 @@
 const { ipcRenderer } = window.require('electron');
+import { updateChart } from './timer-chart.js';
 
 class TimerHistory {
     constructor() {
@@ -9,6 +10,7 @@ class TimerHistory {
     async init() {
         await this.loadHistory();
         this.initializeView();
+        this.updateChartView();
     }
 
     async loadHistory() {
@@ -70,6 +72,19 @@ class TimerHistory {
             `;
             historyContainer.appendChild(historyItem);
         });
+
+        // Update the chart whenever the history view is updated
+        this.updateChartView();
+    }
+
+    updateChartView() {
+        // Convert the history data for the chart
+        const chartData = this.history.map(entry => ({
+            date: entry.startTime,
+            duration: Math.floor(entry.duration / 60) // Convert seconds to minutes
+        }));
+        
+        updateChart(chartData);
     }
 }
 
