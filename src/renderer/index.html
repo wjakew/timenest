@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TimeNest</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="titlebar">
+        <div class="titlebar-title">TimeNest</div>
+        <div class="window-controls">
+            <button class="window-control-button minimize" id="minimize-button">─</button>
+            <button class="window-control-button maximize" id="maximize-button">□</button>
+            <button class="window-control-button close" id="close-button">×</button>
+        </div>
+    </div>
+    <div class="app-container">
+        <!-- Tasks View -->
+        <div class="tasks-container">
+            <div class="tasks-header">
+                <h1>tasks</h1>
+                <button type="button" id="add-task" class="primary-button">+ New Task</button>
+            </div>
+            <div class="task-list" id="task-list"></div>
+        </div>
+
+        <!-- Floating Pomodoro Timer -->
+        <div class="floating-timer" id="floating-timer">
+            <div class="timer-display">
+                <h2 id="current-task">No Task Selected</h2>
+                <div class="timer" id="timer">25:00</div>
+                <div class="timer-controls">
+                    <button id="start-timer" class="timer-button">Start</button>
+                    <button id="pause-timer" class="timer-button" disabled>Pause</button>
+                    <button id="reset-timer" class="timer-button">Reset</button>
+                </div>
+                <div class="timer-controls-settings">
+                    <button id="timer-settings" class="timer-button-settings">Modify Timer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer Settings Modal -->
+        <div id="timer-settings-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>Timer Settings</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="work-duration">Work Duration (minutes):</label>
+                        <input type="number" id="work-duration" min="1" max="60" value="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="break-duration">Break Duration (minutes):</label>
+                        <input type="number" id="break-duration" min="1" max="30" value="5">
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="save-timer-settings" class="primary-button">Save</button>
+                        <button id="cancel-timer-settings" class="timer-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM content to be loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Loading application...');
+            
+            try {
+                // Load the simplified scripts
+                await import('./scripts/tasks.js');
+                await import('./scripts/timer.js');
+                await import('./scripts/window-controls.js');
+                
+                console.log('Application loaded successfully');
+            } catch (error) {
+                console.error('Error loading application:', error);
+            }
+        });
+    </script>
+</body>
+</html> 
