@@ -1693,4 +1693,140 @@ body {
 .empty-state p {
     color: var(--text-muted);
     font-size: 14px;
+}
+
+/* Timeboxing styles */
+.timeboxing-container {
+    background: var(--surface-color);
+    border-radius: 0;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: none;
+    backdrop-filter: blur(10px);
+    margin-top: 0;
+    height: 100%;
+    overflow: auto;
+}
+
+.timeboxing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.timeboxing-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    background: linear-gradient(120deg, var(--primary-color), var(--primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.timeboxing-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    height: calc(100vh - 180px);
+}
+
+.timeboxing-tasks, .timeboxing-boxes {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.timeboxing-tasks-header h2, .timeboxing-boxes-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.timeboxing-boxes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.timebox {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.timebox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.timebox-time {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.timebox-content {
+    min-height: 60px;
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+.timebox-content.drag-over {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary-color);
+}
+
+.timeboxed-task {
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: move;
+    transition: all 0.2s ease;
+}
+
+.timeboxed-task:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.task-item.dragging {
+    opacity: 0.5;
+}
+
+.timebox-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.timebox-actions button {
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.timebox-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.timebox-actions .delete-timebox:hover {
+    background: var(--danger-color);
+    color: white;
 } 

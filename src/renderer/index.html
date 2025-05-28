@@ -16,6 +16,7 @@
                     <button class="nav-btn active" data-view="tasks-view">Tasks</button>
                     <button class="nav-btn" data-view="history-view">Timer History</button>
                     <button class="nav-btn" data-view="planner-view">Planner</button>
+                    <button class="nav-btn" data-view="timeboxing-view">Timeboxing</button>
                     <button class="nav-btn" data-view="habits-view">Habits</button>
                     <button class="nav-btn" data-view="analytics-view">Analytics</button>
                 </div>
@@ -111,6 +112,30 @@
                             </div>
                         </div>
                         <div class="calendar-grid" id="calendar-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeboxing View -->
+        <div class="view hidden" id="timeboxing-view">
+            <div class="timeboxing-container">
+                <div class="timeboxing-header">
+                    <h1>Daily Timeboxing</h1>
+                    <button type="button" id="add-timebox" class="primary-button">+ New Time Box</button>
+                </div>
+                <div class="timeboxing-grid">
+                    <div class="timeboxing-tasks">
+                        <div class="timeboxing-tasks-header">
+                            <h2>Available Tasks</h2>
+                        </div>
+                        <div id="timeboxing-task-list" class="task-list"></div>
+                    </div>
+                    <div class="timeboxing-boxes">
+                        <div class="timeboxing-boxes-header">
+                            <h2>Time Boxes</h2>
+                        </div>
+                        <div id="timeboxing-boxes-container" class="timeboxing-boxes-list"></div>
                     </div>
                 </div>
             </div>
@@ -235,7 +260,7 @@
             try {
                 // Load modules
                 console.log('Loading modules...');
-                const [tasks, timer, timerHistory, windowControls, timerChart, planner, analytics, habits] = await Promise.all([
+                const [tasks, timer, timerHistory, windowControls, timerChart, planner, analytics, habits, timeboxingModule] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
                     import('./scripts/timer-history.js'),
@@ -243,8 +268,12 @@
                     import('./scripts/timer-chart.js'),
                     import('./scripts/planner.js'),
                     import('./scripts/analytics.js'),
-                    import('./scripts/habits.js')
+                    import('./scripts/habits.js'),
+                    import('./scripts/timeboxing.js')
                 ]);
+
+                // Initialize timeboxing
+                const timeboxing = new timeboxingModule.default();
 
                 // Setup navigation
                 const navButtons = document.querySelectorAll('.nav-btn');
