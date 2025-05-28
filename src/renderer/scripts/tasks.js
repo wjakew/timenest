@@ -11,12 +11,12 @@ class TaskManager {
         // Get DOM elements
         this.taskList = document.getElementById('task-list');
         this.completedTaskList = document.getElementById('completed-task-list');
-        this.addTaskButton = document.getElementById('add-task');
-        this.toggleCompletedButton = document.getElementById('toggle-completed');
+        this.addTaskBtn = document.getElementById('add-task');
+        this.toggleCompletedBtn = document.getElementById('toggle-completed');
         this.completedContainer = document.getElementById('completed-tasks-container');
         this.tasksGrid = document.querySelector('.tasks-grid');
 
-        if (this.addTaskButton && this.taskList && this.completedTaskList) {
+        if (this.addTaskBtn && this.taskList && this.completedTaskList) {
             this.initializeEventListeners();
             this.loadTasks();
             this.updateCompletedVisibility();
@@ -25,7 +25,7 @@ class TaskManager {
 
     initializeEventListeners() {
         // Add Task Button
-        this.addTaskButton.addEventListener('click', () => this.addTask());
+        this.addTaskBtn.addEventListener('click', () => this.addTask());
 
         // Task List Event Delegation
         this.taskList.addEventListener('click', (e) => this.handleTaskClick(e));
@@ -34,15 +34,15 @@ class TaskManager {
         this.completedTaskList.addEventListener('click', (e) => this.handleCompletedTaskClick(e));
 
         // Toggle Completed Tasks
-        if (this.toggleCompletedButton) {
-            this.toggleCompletedButton.addEventListener('click', () => this.toggleCompletedTasks());
+        if (this.toggleCompletedBtn) {
+            this.toggleCompletedBtn.addEventListener('click', () => this.toggleCompletedTasks());
         }
     }
 
     updateCompletedVisibility() {
         // Update button text
-        if (this.toggleCompletedButton) {
-            this.toggleCompletedButton.textContent = this.showCompleted ? 'Hide Completed' : 'Show Completed';
+        if (this.toggleCompletedBtn) {
+            this.toggleCompletedBtn.textContent = this.showCompleted ? 'Hide Completed' : 'Show Completed';
         }
 
         // Update completed tasks container visibility
@@ -73,8 +73,11 @@ class TaskManager {
             this.deleteTask(taskId);
         } else if (e.target.classList.contains('task-complete')) {
             this.toggleTaskComplete(taskId);
-        } else {
-            this.selectTask(taskId);
+        } else if (e.target.classList.contains('task-status-btn')) {
+            this.showTaskDetailsDialog(taskId);
+        } else if (!e.target.closest('.task-actions')) {
+            // If not clicking on any action button, show details
+            this.showTaskDetailsDialog(taskId);
         }
     }
 
@@ -85,88 +88,93 @@ class TaskManager {
         const taskId = parseInt(taskItem.dataset.taskId);
 
         if (e.target.classList.contains('task-restore')) {
-            this.restoreTask(taskId);
+            this.toggleTaskComplete(taskId);
         } else if (e.target.classList.contains('delete-task')) {
             this.deleteTask(taskId);
+        } else if (!e.target.closest('.task-actions')) {
+            // If not clicking on any action button, show details
+            this.showTaskDetailsDialog(taskId);
         }
     }
 
-    async restoreTask(taskId) {
+    async showTaskDetailsDialog(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
-        if (task) {
-            task.completed = false;
+        if (!task) return;
+
+        const dialog = document.createElement('div');
+        dialog.className = 'modal';
+        dialog.innerHTML = `
+            <div class="modal-content">
+                <h2>Task Details</h2>
+                <div class="form-group">
+                    <label>Title</label>
+                    <div class="task-detail-field">${task.title}</div>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <div class="task-detail-field">${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Not set'}</div>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <div class="task-detail-field">${task.priority}</div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="task-status" class="task-status-select">
+                        <option value="pending" ${!task.status || task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="completed" ${task.completed ? 'selected' : ''}>Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="task-description" class="task-description-edit">${task.description}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Estimated Pomodoros</label>
+                    <div class="task-detail-field">🍅 ${task.estimatedPomodoros}</div>
+                </div>
+                ${task.completed ? `
+                <div class="form-group">
+                    <label>Completed At</label>
+                    <div class="task-detail-field">${new Date(task.completedAt).toLocaleString()}</div>
+                </div>
+                ` : ''}
+                <div class="modal-buttons">
+                    <button class="primary-button save-btn">Save Changes</button>
+                    <button class="timer-button cancel-btn">Close</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(dialog);
+
+        // Handle save changes
+        dialog.querySelector('.save-btn').addEventListener('click', async () => {
+            const status = dialog.querySelector('#task-status').value;
+            const newDescription = dialog.querySelector('#task-description').value;
+
+            // Update task
+            task.description = newDescription;
+            task.status = status;
+            
+            if (status === 'completed' && !task.completed) {
+                task.completed = true;
+                task.completedAt = Date.now();
+            } else if (status !== 'completed' && task.completed) {
+                task.completed = false;
+                task.completedAt = null;
+            }
+
+            // Save changes
             await this.saveTasks();
             this.render();
-        }
-    }
+            document.body.removeChild(dialog);
+        });
 
-    async showTaskDialog(task = null) {
-        return new Promise((resolve) => {
-            const isNew = !task;
-            task = task || {
-                id: Date.now(),
-                title: '',
-                description: '',
-                estimatedPomodoros: 1,
-                priority: 'medium',
-                completed: false
-            };
-
-            const dialog = document.createElement('div');
-            dialog.className = 'modal';
-            dialog.innerHTML = `
-                <div class="modal-content">
-                    <h2>${isNew ? 'New Task' : 'Edit Task'}</h2>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="task-title" value="${task.title}">
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="task-description">${task.description}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Estimated Pomodoros</label>
-                        <input type="number" id="task-pomodoros" min="1" value="${task.estimatedPomodoros}">
-                    </div>
-                    <div class="form-group">
-                        <label>Priority</label>
-                        <select id="task-priority">
-                            <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
-                            <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
-                            <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Due Date</label>
-                        <input type="date" id="task-due-date" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}">
-                    </div>
-                    <div class="modal-buttons">
-                        <button class="primary-button save-btn">Save</button>
-                        <button class="timer-button cancel-btn">Cancel</button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(dialog);
-
-            dialog.querySelector('.save-btn').addEventListener('click', () => {
-                task.title = dialog.querySelector('#task-title').value;
-                task.description = dialog.querySelector('#task-description').value;
-                task.estimatedPomodoros = parseInt(dialog.querySelector('#task-pomodoros').value);
-                task.priority = dialog.querySelector('#task-priority').value;
-                task.dueDate = dialog.querySelector('#task-due-date').value || null;
-
-                document.body.removeChild(dialog);
-                resolve(task);
-            });
-
-            dialog.querySelector('.cancel-btn').addEventListener('click', () => {
-                document.body.removeChild(dialog);
-                resolve(null);
-            });
-
-            dialog.querySelector('#task-title').focus();
+        // Handle close
+        dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+            document.body.removeChild(dialog);
         });
     }
 
@@ -265,17 +273,22 @@ class TaskManager {
         taskElement.className = `task-item priority-${task.priority}${task.completed ? ' completed' : ''}`;
         taskElement.dataset.taskId = task.id;
 
+        const statusClass = task.status === 'in-progress' ? 'in-progress' : 
+                          task.completed ? 'completed' : 'pending';
+        const statusText = task.status === 'in-progress' ? 'In Progress' : 
+                         task.completed ? 'Completed' : 'Pending';
+
         const actionButtons = isCompleted ? `
-            <button class="timer-button task-restore">Restore</button>
+            <button class="task-restore">Restore</button>
             <button class="timer-button delete-task">Delete</button>
         ` : `
+            <button class="task-status-btn ${statusClass}">${statusText}</button>
             <button class="timer-button edit-task">Edit</button>
             <button class="timer-button delete-task">Delete</button>
         `;
 
         taskElement.innerHTML = `
             <div class="task-header">
-                ${!isCompleted ? `<input type="checkbox" class="task-complete" ${task.completed ? 'checked' : ''}>` : ''}
                 <h3 class="task-title">${task.title}</h3>
                 <div class="task-actions">
                     ${actionButtons}
@@ -321,6 +334,85 @@ class TaskManager {
     notifyTasksUpdated() {
         const event = new CustomEvent('tasks-updated', { detail: { tasks: this.tasks } });
         document.dispatchEvent(event);
+    }
+
+    async showTaskDialog(task = null) {
+        return new Promise((resolve) => {
+            const isNew = !task;
+            task = task || {
+                id: Date.now(),
+                title: '',
+                description: '',
+                estimatedPomodoros: 1,
+                priority: 'medium',
+                completed: false,
+                status: 'pending'
+            };
+
+            const dialog = document.createElement('div');
+            dialog.className = 'modal';
+            dialog.innerHTML = `
+                <div class="modal-content">
+                    <h2>${isNew ? 'New Task' : 'Edit Task'}</h2>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="task-title" value="${task.title}">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="task-description">${task.description}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Pomodoros</label>
+                        <input type="number" id="task-pomodoros" min="1" value="${task.estimatedPomodoros}">
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="task-priority">
+                            <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
+                            <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                            <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="task-status">
+                            <option value="pending" ${!task.status || task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="task-due-date" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}">
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="primary-button save-btn">Save</button>
+                        <button class="timer-button cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(dialog);
+
+            dialog.querySelector('.save-btn').addEventListener('click', () => {
+                task.title = dialog.querySelector('#task-title').value;
+                task.description = dialog.querySelector('#task-description').value;
+                task.estimatedPomodoros = parseInt(dialog.querySelector('#task-pomodoros').value);
+                task.priority = dialog.querySelector('#task-priority').value;
+                task.status = dialog.querySelector('#task-status').value;
+                task.dueDate = dialog.querySelector('#task-due-date').value || null;
+
+                document.body.removeChild(dialog);
+                resolve(task);
+            });
+
+            dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve(null);
+            });
+
+            dialog.querySelector('#task-title').focus();
+        });
     }
 }
 

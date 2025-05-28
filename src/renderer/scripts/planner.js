@@ -24,7 +24,7 @@ class Planner {
     initializeEventListeners() {
         this.prevMonthBtn.addEventListener('click', () => this.changeMonth(-1));
         this.nextMonthBtn.addEventListener('click', () => this.changeMonth(1));
-
+        
         // Listen for task updates
         document.addEventListener('tasks-updated', (event) => {
             this.tasks = event.detail.tasks;
@@ -92,7 +92,7 @@ class Planner {
         const remainingDays = 42 - (firstDayIndex + totalDays); // 42 = 6 rows * 7 days
         for (let day = 1; day <= remainingDays; day++) {
             this.createDayElement(day, true);
-        }
+    }
     }
 
     createDayElement(day, isOtherMonth, isToday = false) {
@@ -168,7 +168,7 @@ class Planner {
         tasksToShow.forEach(task => {
             const taskElement = document.createElement('div');
             taskElement.className = 'planner-task-item';
-            
+
             const taskHeader = document.createElement('div');
             taskHeader.className = 'planner-task-header';
             
@@ -240,7 +240,7 @@ class Planner {
                     <div class="modal-buttons">
                     <button class="primary-button save-btn">Save Changes</button>
                     <button class="timer-button cancel-btn">Close</button>
-                </div>
+                    </div>
                 </div>
             `;
 
@@ -271,7 +271,7 @@ class Planner {
         // Handle close
             dialog.querySelector('.cancel-btn').addEventListener('click', () => {
                 document.body.removeChild(dialog);
-        });
+            });
     }
 
     async saveTaskChanges(updatedTask) {

@@ -302,6 +302,7 @@ body {
     transition: all 0.3s ease;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
+    position: relative;
 }
 
 .task-item:hover {
@@ -1062,4 +1063,38 @@ body {
 .planner-task-item:hover::after {
     transform: translate(4px, -50%);
     color: var(--primary-color);
+}
+
+/* Task Status Button Styles */
+.task-status-btn {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-status-btn.pending {
+    background: var(--bg-color);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.task-status-btn.in-progress {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.task-status-btn.completed {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.task-status-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
 } 
