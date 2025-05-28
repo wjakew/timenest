@@ -15,6 +15,7 @@
                 <div class="nav-menu">
                     <button class="nav-btn active" data-view="tasks-view">Tasks</button>
                     <button class="nav-btn" data-view="history-view">Timer History</button>
+                    <button class="nav-btn" data-view="planner-view">Planner</button>
                 </div>
             </nav>
             <div class="window-controls">
@@ -58,6 +59,31 @@
                     <canvas id="timeChart"></canvas>
                 </div>
                 <div class="timer-history" id="timer-history"></div>
+            </div>
+        </div>
+
+        <!-- Planner View -->
+        <div class="view hidden" id="planner-view">
+            <div class="planner-container">
+                <div class="planner-grid">
+                    <div class="planner-tasks">
+                        <div class="planner-header">
+                            <h2>Scheduled Tasks</h2>
+                        </div>
+                        <div class="planner-task-list" id="planner-task-list"></div>
+                    </div>
+                    <div class="planner-calendar">
+                        <div class="calendar-header">
+                            <h2>Calendar</h2>
+                            <div class="calendar-controls">
+                                <button id="prev-month" class="calendar-nav-btn">←</button>
+                                <span id="current-month-year"></span>
+                                <button id="next-month" class="calendar-nav-btn">→</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -112,12 +138,13 @@
             try {
                 // Load modules
                 console.log('Loading modules...');
-                const [tasks, timer, timerHistory, windowControls, timerChart] = await Promise.all([
+                const [tasks, timer, timerHistory, windowControls, timerChart, planner] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
                     import('./scripts/timer-history.js'),
                     import('./scripts/window-controls.js'),
-                    import('./scripts/timer-chart.js')
+                    import('./scripts/timer-chart.js'),
+                    import('./scripts/planner.js')
                 ]);
 
                 // Setup navigation

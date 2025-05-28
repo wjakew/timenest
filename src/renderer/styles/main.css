@@ -818,4 +818,248 @@ body {
 
 .tasks-grid.no-completed {
     grid-template-columns: 1fr;
+}
+
+/* Planner styles */
+.planner-container {
+    background: var(--surface-color);
+    border-radius: 0;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: none;
+    backdrop-filter: blur(10px);
+    margin-top: 0;
+    height: 100%;
+    overflow: auto;
+}
+
+.planner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 24px;
+    height: 100%;
+}
+
+.planner-tasks {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.planner-header, .calendar-header {
+    margin-bottom: 20px;
+}
+
+.planner-header h2, .calendar-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(120deg, var(--primary-color), var(--primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.calendar-nav-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+#current-month-year {
+    font-size: 16px;
+    font-weight: 500;
+    min-width: 150px;
+    text-align: center;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.calendar-day:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary-color);
+}
+
+.calendar-day.today {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--primary-color);
+}
+
+.calendar-day.selected {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.calendar-day.other-month {
+    opacity: 0.5;
+}
+
+.calendar-day-number {
+    font-weight: 500;
+}
+
+.calendar-day-tasks {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.planner-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}
+
+.planner-task-item {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.planner-task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.planner-task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.planner-task-title {
+    font-weight: 500;
+}
+
+.planner-task-date {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.planner-task-description {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Task Detail Dialog styles */
+.task-detail-field {
+    padding: 8px 12px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 14px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+.task-status-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-status-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.task-description-edit {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.task-description-edit:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.planner-task-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.planner-task-item::after {
+    content: '›';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+}
+
+.planner-task-item:hover::after {
+    transform: translate(4px, -50%);
+    color: var(--primary-color);
 } 

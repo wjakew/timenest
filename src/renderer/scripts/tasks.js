@@ -137,6 +137,10 @@ class TaskManager {
                             <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="task-due-date" value="${task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ''}">
+                    </div>
                     <div class="modal-buttons">
                         <button class="primary-button save-btn">Save</button>
                         <button class="timer-button cancel-btn">Cancel</button>
@@ -151,6 +155,7 @@ class TaskManager {
                 task.description = dialog.querySelector('#task-description').value;
                 task.estimatedPomodoros = parseInt(dialog.querySelector('#task-pomodoros').value);
                 task.priority = dialog.querySelector('#task-priority').value;
+                task.dueDate = dialog.querySelector('#task-due-date').value || null;
 
                 document.body.removeChild(dialog);
                 resolve(task);
@@ -209,6 +214,7 @@ class TaskManager {
         const result = await ipcRenderer.invoke('load-data', { key: 'tasks' });
         this.tasks = result.success && result.data ? result.data : [];
         this.render();
+        this.notifyTasksUpdated();
     }
 
     async saveTasks() {
@@ -216,6 +222,7 @@ class TaskManager {
             key: 'tasks',
             data: this.tasks
         });
+        this.notifyTasksUpdated();
     }
 
     render() {
@@ -279,6 +286,7 @@ class TaskManager {
                 <div class="task-meta">
                     <span class="task-pomodoros">🍅 ${task.estimatedPomodoros}</span>
                     <span class="task-priority">Priority: ${task.priority}</span>
+                    ${task.dueDate ? `<span class="task-due-date">Due: ${new Date(task.dueDate).toLocaleDateString()}</span>` : ''}
                     ${task.completedAt ? `<span class="task-completed-at">Completed: ${new Date(task.completedAt).toLocaleDateString()}</span>` : ''}
                 </div>
             </div>
@@ -307,6 +315,12 @@ class TaskManager {
         if (currentTaskDisplay) {
             currentTaskDisplay.textContent = task.title;
         }
+    }
+
+    // Add method to dispatch task update event
+    notifyTasksUpdated() {
+        const event = new CustomEvent('tasks-updated', { detail: { tasks: this.tasks } });
+        document.dispatchEvent(event);
     }
 }
 
