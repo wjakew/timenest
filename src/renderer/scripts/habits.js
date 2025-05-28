@@ -9,6 +9,7 @@ class Habits {
     init() {
         this.loadHabits();
         this.setupEventListeners();
+        this.updateHabitsAnalytics();
     }
 
     loadHabits() {
@@ -18,6 +19,151 @@ class Habits {
 
     saveHabits() {
         this.store.setItem('habits', JSON.stringify(this.habits));
+        this.updateHabitsAnalytics();
+    }
+
+    updateHabitsAnalytics() {
+        // Update active habits count
+        const activeHabits = this.habits.length;
+        const activeHabitsElement = document.getElementById('active-habits-count');
+        if (activeHabitsElement) {
+            activeHabitsElement.textContent = activeHabits;
+        }
+
+        // Calculate completion rate
+        const today = new Date();
+        const lastWeek = new Date(today);
+        lastWeek.setDate(lastWeek.getDate() - 7);
+
+        let totalPossibleCompletions = 0;
+        let totalActualCompletions = 0;
+
+        this.habits.forEach(habit => {
+            const daysToCheck = habit.frequency === 'daily' ? 7 : 1;
+            totalPossibleCompletions += daysToCheck;
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                if (habit.progress.some(p => p.date === dateStr)) {
+                    totalActualCompletions++;
+                }
+            }
+        });
+
+        const completionRate = totalPossibleCompletions > 0 
+            ? Math.round((totalActualCompletions / totalPossibleCompletions) * 100) 
+            : 0;
+
+        const completionRateElement = document.getElementById('habits-completion-rate');
+        if (completionRateElement) {
+            completionRateElement.textContent = `${completionRate}%`;
+        }
+
+        // Calculate longest streak
+        let longestStreak = 0;
+        this.habits.forEach(habit => {
+            let currentStreak = 0;
+            let maxStreak = 0;
+            
+            // Sort progress by date
+            const sortedProgress = habit.progress
+                .map(p => new Date(p.date))
+                .sort((a, b) => b - a);
+
+            for (let i = 0; i < sortedProgress.length; i++) {
+                if (i === 0) {
+                    currentStreak = 1;
+                } else {
+                    const diff = Math.abs(sortedProgress[i - 1] - sortedProgress[i]) / (1000 * 60 * 60 * 24);
+                    if (diff === 1) {
+                        currentStreak++;
+                    } else {
+                        maxStreak = Math.max(maxStreak, currentStreak);
+                        currentStreak = 1;
+                    }
+                }
+            }
+            maxStreak = Math.max(maxStreak, currentStreak);
+            longestStreak = Math.max(longestStreak, maxStreak);
+        });
+
+        const longestStreakElement = document.getElementById('longest-streak');
+        if (longestStreakElement) {
+            longestStreakElement.textContent = `${longestStreak} days`;
+        }
+
+        // Update habits heatmap
+        this.updateHabitsHeatmap();
+    }
+
+    updateHabitsHeatmap() {
+        const heatmapContainer = document.getElementById('habits-heatmap');
+        if (!heatmapContainer) return;
+
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(startDate.getDate() - 364); // Show last year
+
+        const daysArray = [];
+        let currentDate = new Date(startDate);
+
+        while (currentDate <= today) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const completions = this.habits.reduce((count, habit) => {
+                return count + (habit.progress.some(p => p.date === dateStr) ? 1 : 0);
+            }, 0);
+            
+            daysArray.push({
+                date: new Date(currentDate),
+                count: completions
+            });
+
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Clear existing content
+        heatmapContainer.innerHTML = '';
+
+        // Create heatmap grid similar to task heatmap
+        const heatmapWrapper = document.createElement('div');
+        heatmapWrapper.className = 'heatmap-wrapper';
+        
+        // Add month labels
+        const monthLabels = document.createElement('div');
+        monthLabels.className = 'heatmap-month-labels';
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        let currentMonth = new Date(startDate);
+        while (currentMonth <= today) {
+            const label = document.createElement('div');
+            label.className = 'heatmap-month-label';
+            label.textContent = months[currentMonth.getMonth()];
+            monthLabels.appendChild(label);
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+        }
+        heatmapWrapper.appendChild(monthLabels);
+
+        // Create heatmap grid
+        const grid = document.createElement('div');
+        grid.className = 'heatmap-grid';
+        
+        daysArray.forEach(day => {
+            const cell = document.createElement('div');
+            cell.className = 'heatmap-cell';
+            
+            // Set intensity based on count
+            const intensity = Math.min(Math.floor(day.count), 4);
+            cell.classList.add(`intensity-${intensity}`);
+            
+            cell.title = `${day.date.toDateString()}: ${day.count} habits completed`;
+            grid.appendChild(cell);
+        });
+        
+        heatmapWrapper.appendChild(grid);
+        heatmapContainer.appendChild(heatmapWrapper);
     }
 
     setupEventListeners() {

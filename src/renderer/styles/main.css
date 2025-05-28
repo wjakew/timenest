@@ -1502,6 +1502,49 @@ body {
     background: rgba(99, 102, 241, 0.8);
 }
 
+/* Habits Analytics styles */
+.habits-analytics {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.habits-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.habits-stats .stat-card {
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.habits-stats .stat-card h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.habits-stats .stat-card div {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+#habits-heatmap {
+    margin-top: 16px;
+    min-height: 140px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+}
+
 /* Habits styles */
 .habits-container {
     background: var(--surface-color);
