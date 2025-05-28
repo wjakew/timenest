@@ -28,12 +28,23 @@
     <div class="app-container">
         <!-- Tasks View -->
         <div class="view" id="tasks-view">
-            <div class="tasks-container">
-                <div class="tasks-header">
-                    <h1>tasks</h1>
-                    <button type="button" id="add-task" class="primary-button">+ New Task</button>
+            <div class="tasks-grid">
+                <div class="tasks-container">
+                    <div class="tasks-header">
+                        <h1>Active Tasks</h1>
+                        <div class="tasks-header-actions">
+                            <button type="button" id="toggle-completed" class="secondary-button">Hide Completed</button>
+                            <button type="button" id="add-task" class="primary-button">+ New Task</button>
+                        </div>
+                    </div>
+                    <div class="task-list" id="task-list"></div>
                 </div>
-                <div class="task-list" id="task-list"></div>
+                <div class="tasks-container completed-tasks-container" id="completed-tasks-container">
+                    <div class="tasks-header">
+                        <h1>Completed Tasks</h1>
+                    </div>
+                    <div class="task-list" id="completed-task-list"></div>
+                </div>
             </div>
         </div>
 
