@@ -1,6 +1,8 @@
-# TimeNest
+# timenest
 
 A powerful productivity app that combines time boxing for daily planning with a Pomodoro timer for task execution. Built with Electron for cross-platform compatibility and a modern, user-friendly interface.
+![src1](/readme_resources/src1.png)
+
 
 ## Features
 
@@ -9,12 +11,16 @@ A powerful productivity app that combines time boxing for daily planning with a 
   - Drag-and-drop task scheduling
   - Flexible time block management
 
+  ![src2](/readme_resources/src2.png)
+
 - ⏱️ **Advanced Pomodoro Timer**
   - Customizable work duration (1-60 minutes)
   - Adjustable break duration (1-30 minutes)
   - Floating timer window for easy access
   - Timer settings customization
   - Visual and audio notifications
+
+  ![src4](/readme_resources/src4.png)
 
 - ✅ **Task Management**
   - Create, edit, and delete tasks
@@ -23,6 +29,8 @@ A powerful productivity app that combines time boxing for daily planning with a 
   - Task details and notes
   - Visual task status indicators
 
+  ![src3](/readme_resources/src3.png)
+
 - 🎨 **Modern UI/UX**
   - Dark/Light theme support
   - Responsive design for different screen sizes
@@ -30,10 +38,7 @@ A powerful productivity app that combines time boxing for daily planning with a 
   - Smooth animations and transitions
   - Modern glass-morphism design
 
-- 🔒 **Focus Mode**
-  - Distraction-free environment
-  - Always-on-top timer window
-  - Full-screen focus mode option
+  ![src4](/readme_resources/src4.png)
 
 - ⚙️ **Customizable Settings**
   - Work/break duration customization
@@ -41,12 +46,6 @@ A powerful productivity app that combines time boxing for daily planning with a 
   - System notifications control
   - Dark mode preference
   - Auto-start options for breaks and sessions
-
-- 📊 **Data Management**
-  - Data export functionality (CSV/Markdown)
-  - Settings persistence
-  - Task and timeline data backup
-  - Data import/export capabilities
 
 ## Getting Started
 
