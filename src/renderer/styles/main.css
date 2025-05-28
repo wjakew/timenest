@@ -356,14 +356,68 @@ body {
 
 .task-actions {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .task-actions button {
-    width: 100%;
-    min-width: 80px;
-    text-align: center;
+    padding: 8px 12px;
+    border: none;
+    background: var(--surface-color);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    height: 32px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.task-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-actions .task-restore {
+    background: var(--success-color);
+    color: white;
+}
+
+.task-actions .task-restore:hover {
+    background: var(--success-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .delete-task {
+    background: var(--danger-color);
+    color: white;
+}
+
+.task-actions .delete-task:hover {
+    background: var(--danger-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .edit-task {
+    background: var(--warning-color);
+    color: white;
+}
+
+.task-actions .edit-task:hover {
+    background: var(--warning-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .task-status-btn {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 0.85em;
 }
 
 .task-details {
@@ -1192,4 +1246,188 @@ body {
 .task-status-btn:hover {
     transform: translateY(-1px);
     filter: brightness(1.1);
+}
+
+/* Modern Table Styles */
+.task-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+    background: var(--background-color);
+}
+
+.task-table thead th {
+    background: var(--background-color);
+    color: var(--text-color);
+    font-weight: 600;
+    text-align: left;
+    padding: 16px;
+    border-bottom: 2px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.task-table tbody tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.task-table tbody tr:hover {
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.task-title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task-description-indicator {
+    color: var(--text-secondary);
+    cursor: help;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background: var(--pending-color, #f0f0f0);
+    color: var(--pending-text, #666);
+}
+
+.status-badge.in-progress {
+    background: var(--in-progress-color, #e3f2fd);
+    color: var(--in-progress-text, #1976d2);
+}
+
+.status-badge.completed {
+    background: var(--completed-color, #e8f5e9);
+    color: var(--completed-text, #2e7d32);
+}
+
+/* Priority Badge */
+.priority-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.priority-badge.high {
+    background: var(--high-priority-color, #ffebee);
+    color: var(--high-priority-text, #c62828);
+}
+
+.priority-badge.medium {
+    background: var(--medium-priority-color, #fff3e0);
+    color: var(--medium-priority-text, #ef6c00);
+}
+
+.priority-badge.low {
+    background: var(--low-priority-color, #e8f5e9);
+    color: var(--low-priority-text, #2e7d32);
+}
+
+/* Task Actions */
+.task-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.task-actions button {
+    padding: 8px 12px;
+    border: none;
+    background: var(--surface-color);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    height: 32px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.task-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-actions .task-restore {
+    background: var(--success-color);
+    color: white;
+}
+
+.task-actions .task-restore:hover {
+    background: var(--success-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .delete-task {
+    background: var(--danger-color);
+    color: white;
+}
+
+.task-actions .delete-task:hover {
+    background: var(--danger-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .edit-task {
+    background: var(--warning-color);
+    color: white;
+}
+
+.task-actions .edit-task:hover {
+    background: var(--warning-color);
+    filter: brightness(1.1);
+}
+
+.task-actions .task-status-btn {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 0.85em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .task-table td, .task-table th {
+        padding: 8px;
+    }
+    
+    .task-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
 } 

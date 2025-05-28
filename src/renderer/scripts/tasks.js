@@ -69,39 +69,45 @@ class TaskManager {
     }
 
     handleTaskClick(e) {
-        const taskItem = e.target.closest('.task-item');
-        if (!taskItem) return;
+        const taskRow = e.target.closest('.task-row');
+        if (!taskRow) return;
 
-        const taskId = parseInt(taskItem.dataset.taskId);
+        const taskId = parseInt(taskRow.dataset.taskId);
 
-        if (e.target.classList.contains('edit-task')) {
-            this.editTask(taskId);
-        } else if (e.target.classList.contains('delete-task')) {
-            this.deleteTask(taskId);
-        } else if (e.target.classList.contains('task-complete')) {
-            this.toggleTaskComplete(taskId);
-        } else if (e.target.classList.contains('task-status-btn')) {
-            this.showTaskDetailsDialog(taskId);
-        } else if (!e.target.closest('.task-actions')) {
-            // If not clicking on any action button, show details
-            this.showTaskDetailsDialog(taskId);
+        // If clicking on action buttons, handle those separately
+        if (e.target.closest('.task-actions')) {
+            if (e.target.classList.contains('edit-task')) {
+                this.editTask(taskId);
+            } else if (e.target.classList.contains('delete-task')) {
+                this.deleteTask(taskId);
+            } else if (e.target.classList.contains('task-status-btn')) {
+                this.showTaskDetailsDialog(taskId);
+            }
+            return;
         }
+
+        // If not clicking on action buttons, show task details
+        this.showTaskDetailsDialog(taskId);
     }
 
     handleCompletedTaskClick(e) {
-        const taskItem = e.target.closest('.task-item');
-        if (!taskItem) return;
+        const taskRow = e.target.closest('.task-row');
+        if (!taskRow) return;
 
-        const taskId = parseInt(taskItem.dataset.taskId);
+        const taskId = parseInt(taskRow.dataset.taskId);
 
-        if (e.target.classList.contains('task-restore')) {
-            this.toggleTaskComplete(taskId);
-        } else if (e.target.classList.contains('delete-task')) {
-            this.deleteTask(taskId);
-        } else if (!e.target.closest('.task-actions')) {
-            // If not clicking on any action button, show details
-            this.showTaskDetailsDialog(taskId);
+        // If clicking on action buttons, handle those separately
+        if (e.target.closest('.task-actions')) {
+            if (e.target.classList.contains('task-restore')) {
+                this.toggleTaskComplete(taskId);
+            } else if (e.target.classList.contains('delete-task')) {
+                this.deleteTask(taskId);
+            }
+            return;
         }
+
+        // If not clicking on action buttons, show task details
+        this.showTaskDetailsDialog(taskId);
     }
 
     async showTaskDetailsDialog(taskId) {
@@ -309,8 +315,8 @@ class TaskManager {
     }
 
     createTaskElement(task, isCompleted) {
-        const taskElement = document.createElement('div');
-        taskElement.className = `task-item priority-${task.priority}${task.completed ? ' completed' : ''}`;
+        const taskElement = document.createElement('tr');
+        taskElement.className = `task-row priority-${task.priority}${task.completed ? ' completed' : ''}`;
         taskElement.dataset.taskId = task.id;
 
         const statusClass = task.status === 'in-progress' ? 'in-progress' : 
@@ -319,31 +325,37 @@ class TaskManager {
                          task.completed ? 'Completed' : 'Pending';
 
         const actionButtons = isCompleted ? `
-            <button class="task-restore">Restore</button>
-            <button class="timer-button delete-task">Delete</button>
+            <button class="task-restore" title="Restore Task">↩</button>
+            <button class="timer-button delete-task" title="Delete Task">Delete</button>
         ` : `
-            <button class="task-status-btn ${statusClass}">${statusText}</button>
-            <button class="timer-button edit-task">Edit</button>
-            <button class="timer-button delete-task">Delete</button>
+            <button class="task-status-btn ${statusClass}" title="Change Status">${statusText}</button>
+            <button class="timer-button edit-task" title="Edit Task">Edit</button>
+            <button class="timer-button delete-task" title="Delete Task">Delete</button>
         `;
 
-        taskElement.innerHTML = `
-            <div class="task-header">
-                <h3 class="task-title">${task.title}</h3>
-                <div class="task-actions">
-                    ${actionButtons}
-                </div>
-            </div>
-            <div class="task-details">
-                <p class="task-description">${task.description}</p>
-                <div class="task-meta">
-                    <span class="task-pomodoros">🍅 ${task.estimatedPomodoros}</span>
-                    <span class="task-priority">Priority: ${task.priority}</span>
-                    ${task.dueDate ? `<span class="task-due-date">Due: ${new Date(task.dueDate).toLocaleDateString()}</span>` : ''}
-                    ${task.completedAt ? `<span class="task-completed-at">Completed: ${new Date(task.completedAt).toLocaleDateString()}</span>` : ''}
-                </div>
-            </div>
-        `;
+        if (isCompleted) {
+            taskElement.innerHTML = `
+                <td class="task-title">${task.title}</td>
+                <td class="task-completed-at">${new Date(task.completedAt).toLocaleDateString()}</td>
+                <td class="task-priority"><span class="priority-badge ${task.priority}">${task.priority}</span></td>
+                <td class="task-pomodoros">🍅 ${task.estimatedPomodoros}</td>
+                <td class="task-actions">${actionButtons}</td>
+            `;
+        } else {
+            taskElement.innerHTML = `
+                <td class="task-title">
+                    <div class="task-title-content">
+                        <span>${task.title}</span>
+                        ${task.description ? '<span class="task-description-indicator" title="Has Description">📝</span>' : ''}
+                    </div>
+                </td>
+                <td class="task-status"><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td class="task-priority"><span class="priority-badge ${task.priority}">${task.priority}</span></td>
+                <td class="task-due-date">${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
+                <td class="task-pomodoros">🍅 ${task.estimatedPomodoros}</td>
+                <td class="task-actions">${actionButtons}</td>
+            `;
+        }
 
         return taskElement;
     }

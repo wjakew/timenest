@@ -39,13 +39,40 @@
                             <button type="button" id="add-task" class="primary-button">+ New Task</button>
                         </div>
                     </div>
-                    <div class="task-list" id="task-list"></div>
+                    <div class="task-table-container">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Due Date</th>
+                                    <th>Pomodoros</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-list"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="tasks-container completed-tasks-container" id="completed-tasks-container">
                     <div class="tasks-header">
                         <h1>Completed Tasks</h1>
                     </div>
-                    <div class="task-list" id="completed-task-list"></div>
+                    <div class="task-table-container">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Completed At</th>
+                                    <th>Priority</th>
+                                    <th>Pomodoros</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="completed-task-list"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
