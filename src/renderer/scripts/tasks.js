@@ -105,41 +105,43 @@ class TaskManager {
         dialog.className = 'modal';
         dialog.innerHTML = `
             <div class="modal-content">
-                <h2>Task Details</h2>
-                <div class="form-group">
-                    <label>Title</label>
-                    <div class="task-detail-field">${task.title}</div>
+                <div class="task-detail-title">${task.title}</div>
+                <div class="task-details-grid">
+                    <div class="task-details-meta">
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <div class="task-detail-field">${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Not set'}</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="task-status" class="task-status-select">
+                                <option value="pending" ${!task.status || task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="completed" ${task.completed ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <div class="task-detail-field">${task.priority}</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Estimated Pomodoros</label>
+                            <div class="task-detail-field">🍅 ${task.estimatedPomodoros}</div>
+                        </div>
+                        ${task.completedAt ? `
+                        <div class="form-group">
+                            <label>Completed At</label>
+                            <div class="task-detail-field">${new Date(task.completedAt).toLocaleString()}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="task-details-description">
+                        <div class="form-group" style="height: 100%;">
+                            <label>Description</label>
+                            <textarea id="task-description" class="task-description-edit">${task.description}</textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Due Date</label>
-                    <div class="task-detail-field">${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Not set'}</div>
-                </div>
-                <div class="form-group">
-                    <label>Priority</label>
-                    <div class="task-detail-field">${task.priority}</div>
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="task-status" class="task-status-select">
-                        <option value="pending" ${!task.status || task.status === 'pending' ? 'selected' : ''}>Pending</option>
-                        <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="completed" ${task.completed ? 'selected' : ''}>Completed</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="task-description" class="task-description-edit">${task.description}</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Estimated Pomodoros</label>
-                    <div class="task-detail-field">🍅 ${task.estimatedPomodoros}</div>
-                </div>
-                ${task.completed ? `
-                <div class="form-group">
-                    <label>Completed At</label>
-                    <div class="task-detail-field">${new Date(task.completedAt).toLocaleString()}</div>
-                </div>
-                ` : ''}
                 <div class="modal-buttons">
                     <button class="primary-button save-btn">Save Changes</button>
                     <button class="timer-button cancel-btn">Close</button>

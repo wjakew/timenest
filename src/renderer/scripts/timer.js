@@ -59,9 +59,9 @@ class PomodoroTimer {
         this.updateDisplay();
         this.updateToggleButton();
         
-        // Show timer by default
-        this.isTimerVisible = true;
-        this.floatingTimer.classList.remove('hidden');
+        // Hide timer by default
+        this.isTimerVisible = false;
+        this.floatingTimer.classList.add('hidden');
         
         // Listen for focus mode changes
         document.body.addEventListener('focusModeChange', (e) => {
