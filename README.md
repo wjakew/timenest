@@ -1,5 +1,5 @@
 # timenest
-
+![logo.png](/build/logo.png)
 A powerful productivity app that combines time boxing for daily planning with a Pomodoro timer for task execution. Built with Electron for cross-platform compatibility and a modern, user-friendly interface.
 ![src1](/readme_resources/src1.png)
 
