@@ -16,6 +16,7 @@
                     <button class="nav-btn active" data-view="tasks-view">Tasks</button>
                     <button class="nav-btn" data-view="history-view">Timer History</button>
                     <button class="nav-btn" data-view="planner-view">Planner</button>
+                    <button class="nav-btn" data-view="analytics-view">Analytics</button>
                 </div>
             </nav>
             <div class="window-controls">
@@ -128,6 +129,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Analytics View -->
+        <div class="view hidden" id="analytics-view">
+            <div class="analytics-container">
+                <div class="analytics-header">
+                    <h2>Task Analytics</h2>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Total Tasks Completed</h3>
+                        <div id="total-tasks-completed">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Weekly Average</h3>
+                        <div id="weekly-average">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Most Productive Day</h3>
+                        <div id="most-productive-day">-</div>
+                    </div>
+                </div>
+                <div class="heatmap-container">
+                    <h3>Task Completion Heatmap</h3>
+                    <div id="task-heatmap"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -138,13 +167,14 @@
             try {
                 // Load modules
                 console.log('Loading modules...');
-                const [tasks, timer, timerHistory, windowControls, timerChart, planner] = await Promise.all([
+                const [tasks, timer, timerHistory, windowControls, timerChart, planner, analytics] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
                     import('./scripts/timer-history.js'),
                     import('./scripts/window-controls.js'),
                     import('./scripts/timer-chart.js'),
-                    import('./scripts/planner.js')
+                    import('./scripts/planner.js'),
+                    import('./scripts/analytics.js')
                 ]);
 
                 // Setup navigation

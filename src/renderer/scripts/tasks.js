@@ -3,6 +3,8 @@ const { ipcRenderer } = window.require('electron');
 class TaskManager {
     constructor() {
         this.tasks = [];
+        this.store = window.localStorage;
+        this.analytics = null;
         this.showCompleted = false;
         this.init();
     }
@@ -15,6 +17,11 @@ class TaskManager {
         this.toggleCompletedBtn = document.getElementById('toggle-completed');
         this.completedContainer = document.getElementById('completed-tasks-container');
         this.tasksGrid = document.querySelector('.tasks-grid');
+
+        // Initialize analytics
+        import('./analytics.js').then(module => {
+            this.analytics = new module.default();
+        });
 
         if (this.addTaskBtn && this.taskList && this.completedTaskList) {
             this.initializeEventListeners();
@@ -214,25 +221,56 @@ class TaskManager {
         const task = this.tasks.find(t => t.id === taskId);
         if (task) {
             task.completed = !task.completed;
-            task.completedAt = task.completed ? Date.now() : null;
-            await this.saveTasks();
+            if (task.completed) {
+                task.completedAt = new Date().toISOString();
+            } else {
+                delete task.completedAt;
+            }
+            this.saveTasks();
             this.render();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
         }
     }
 
     async loadTasks() {
-        const result = await ipcRenderer.invoke('load-data', { key: 'tasks' });
-        this.tasks = result.success && result.data ? result.data : [];
-        this.render();
-        this.notifyTasksUpdated();
+        try {
+            const tasksJson = this.store.getItem('tasks');
+            this.tasks = tasksJson ? JSON.parse(tasksJson) : [];
+            this.render();
+            this.notifyTasksUpdated();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
+        } catch (error) {
+            console.error('Error loading tasks:', error);
+            this.tasks = [];
+        }
     }
 
     async saveTasks() {
-        await ipcRenderer.invoke('save-data', {
-            key: 'tasks',
-            data: this.tasks
-        });
-        this.notifyTasksUpdated();
+        try {
+            this.store.setItem('tasks', JSON.stringify(this.tasks));
+            this.notifyTasksUpdated();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
+        } catch (error) {
+            console.error('Error saving tasks:', error);
+        }
     }
 
     render() {
