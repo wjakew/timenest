@@ -16,6 +16,7 @@
                     <button class="nav-btn active" data-view="tasks-view">Tasks</button>
                     <button class="nav-btn" data-view="history-view">Timer History</button>
                     <button class="nav-btn" data-view="planner-view">Planner</button>
+                    <button class="nav-btn" data-view="habits-view">Habits</button>
                     <button class="nav-btn" data-view="analytics-view">Analytics</button>
                 </div>
             </nav>
@@ -115,6 +116,24 @@
             </div>
         </div>
 
+        <!-- Habits View -->
+        <div class="view hidden" id="habits-view">
+            <div class="habits-container">
+                <div class="habits-header">
+                    <h1>Habit Tracker</h1>
+                    <div class="habits-header-actions">
+                        <button type="button" id="add-habit" class="primary-button">+ New Habit</button>
+                    </div>
+                </div>
+                <div class="habits-grid" id="habit-list">
+                    <!-- Habits will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Container -->
+        <div id="modal-container"></div>
+
         <!-- Toggle Timer Button -->
         <button id="toggle-timer" class="toggle-timer-button">
             Show Timer
@@ -196,14 +215,15 @@
             try {
                 // Load modules
                 console.log('Loading modules...');
-                const [tasks, timer, timerHistory, windowControls, timerChart, planner, analytics] = await Promise.all([
+                const [tasks, timer, timerHistory, windowControls, timerChart, planner, analytics, habits] = await Promise.all([
                     import('./scripts/tasks.js'),
                     import('./scripts/timer.js'),
                     import('./scripts/timer-history.js'),
                     import('./scripts/window-controls.js'),
                     import('./scripts/timer-chart.js'),
                     import('./scripts/planner.js'),
-                    import('./scripts/analytics.js')
+                    import('./scripts/analytics.js'),
+                    import('./scripts/habits.js')
                 ]);
 
                 // Setup navigation
