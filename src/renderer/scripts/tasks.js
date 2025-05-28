@@ -199,6 +199,13 @@ class TaskManager {
             this.tasks.push(task);
             await this.saveTasks();
             this.render();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
         }
     }
 
@@ -212,6 +219,13 @@ class TaskManager {
             this.tasks[index] = updatedTask;
             await this.saveTasks();
             this.render();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
         }
     }
 
@@ -220,6 +234,13 @@ class TaskManager {
             this.tasks = this.tasks.filter(t => t.id !== taskId);
             await this.saveTasks();
             this.render();
+            
+            // Update analytics if available
+            if (this.analytics) {
+                this.analytics.loadCompletedTasks();
+                this.analytics.setupHeatmap();
+                this.analytics.updateStats();
+            }
         }
     }
 
